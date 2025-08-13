@@ -1,4 +1,5 @@
 function calcDellCof() {
+    resetResult();
     let sugar = Number(document.getElementById('sugar_id').value);
     let alcohol = Number(document.getElementById('alcohol_id').value);
     let result = document.getElementById('result_id');
@@ -26,15 +27,22 @@ function calcAlcohol() {
     let alcoholBlend = Number(document.getElementById('alcohol-blend_id').value);
     let total = document.getElementById('total_id');
 
-    if (sugarVine > 0 && amountVine > 0 && alcoholBlend > 0 && sugar > 0 && alcohol > 0 && total) {
+    if (sugarVine > 0 && amountVine > 0 && alcoholBlend > 0 && sugar > 0 && alcohol > 0
+        && (sugarVine > sugar) && (alcoholBlend > alcohol)  && total) {
         const result = ((alcohol - ((sugarVine - sugar) * 0.56)) / (alcoholBlend - alcohol)) * amountVine;
         if (result > 0) {
-            total.textContent = 'Необхідно додати : ' + result.toFixed(3) + ' л.';
+            total.textContent = 'Кількість спирту : ' + result.toFixed(3) + ' л.';
         } else {
-            total.textContent = 'Необхідно додати : не розраховано';
+            total.textContent = 'Кількість спирту : не розраховано';
         }
-    }else {
-        alert("Деякі поля мають не коректні дані. Перевірте значення та спробуйте ще раз");
+        let alert = document.getElementById('alert_id');
+        if (alert) {
+            alert.remove();
+        }
+    } else {
+        const message = 'Деякі поля містять помилки. Перевірте значення та спробуйте знову!';
+        const type = 'danger';
+        addAlertPlaceholder(message, type);
     }
 }
 
@@ -47,7 +55,37 @@ function resetAll() {
     let total = document.getElementById('total_id');
     let result = document.getElementById('result_id');
     if (total && result) {
-        total.textContent = 'Необхідно додати : не розраховано';
-        result.textContent = 'Результат : не розраховано';
+        total.textContent = 'Кількість спирту : не розраховано';
+        result.textContent = 'Коєфіціент : не розраховано';
+        total.style.color = "black";
+        result.style.color = "black";
+    }
+    let alert = document.getElementById('alert_id');
+    if (alert) {
+        alert.remove();
+    }
+}
+
+function addAlertPlaceholder(message, type) {
+    let alert = document.getElementById('alert_id');
+    if (alert) {
+        return;
+    }
+    const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = [
+        `<div class="alert alert-${type} alert-dismissible" role="alert" id="alert_id">`,
+        `   <div>${message}</div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+    ].join('')
+
+    alertPlaceholder.append(wrapper);
+}
+
+function resetResult() {
+    let total = document.getElementById('total_id');
+    if (total) {
+        total.textContent = 'Кількість спирту : не розраховано';
     }
 }
